@@ -17,11 +17,6 @@ pre { background: #f6f6f8; border: 1px solid #e4e4ea; border-radius: 6px; paddin
 table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .95em; }
 th, td { border: 1px solid #ddd; padding: .4rem .6rem; text-align: left; }
 th { background: #f6f6f8; }
-nav#TOC { background: #faf9fc; border: 1px solid #e4e4ea; border-radius: 6px; padding: .75rem 1.25rem; margin: 1.5rem 0; }
-nav#TOC h2#toc-title { font-size: 1rem; margin: 0 0 .25rem; }
-nav#TOC ul { padding-left: 1.2rem; margin: .25rem 0; }
-nav#TOC > ul { padding-left: 0; list-style: none; }
-nav#TOC > ul > li { margin-top: .4rem; }
 a.header-link { color: inherit; text-decoration: none; }
 a.header-link:hover { text-decoration: underline; }
 a.header-link:hover::after { content: " #"; color: #aaa; }
