@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.14" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>A Short Guide to uv for Data Science</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+em, em em em, em em em em em {
+font-style: italic;
+}
+em em, em em em em {
+font-style: normal;
+}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+@media print {
+html {
+color-scheme: light only;
+}
+html, body, pre, code {
+background-color: transparent;
+}
+body, a, a:visited, blockquote {
+color: black;
+}
+pre, code {
+padding: 0;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+} </style>
+  <style type="text/css">body {
+max-width: 44rem;
+margin: 2rem auto;
+padding: 0 1rem;
+font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+line-height: 1.6;
+color: #222;
+}
+h1, h2 { line-height: 1.25; }
+h1 { margin-top: 2.5rem; border-bottom: 1px solid #ddd; padding-bottom: .3rem; }
+header h1.title { border: none; margin-bottom: 0; }
+header .subtitle { color: #666; margin-top: .25rem; }
+a { color: #6a3dc4; }
+code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em; }
+:not(pre) > code { background: #f3f1f8; padding: .1em .3em; border-radius: 3px; }
+pre { background: #f6f6f8; border: 1px solid #e4e4ea; border-radius: 6px; padding: .75rem 1rem; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .95em; }
+th, td { border: 1px solid #ddd; padding: .4rem .6rem; text-align: left; }
+th { background: #f6f6f8; }
+nav#TOC { background: #faf9fc; border: 1px solid #e4e4ea; border-radius: 6px; padding: .75rem 1.25rem; margin: 1.5rem 0; }
+nav#TOC h2#toc-title { font-size: 1rem; margin: 0 0 .25rem; }
+nav#TOC ul { padding-left: 1.2rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; list-style: none; }
+nav#TOC > ul > li { margin-top: .4rem; }
+a.header-link { color: inherit; text-decoration: none; }
+a.header-link:hover { text-decoration: underline; }
+a.header-link:hover::after { content: " #"; color: #aaa; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">A Short Guide to uv for Data Science</h1>
+<p class="subtitle">Managing Python, packages, and Jupyter with one
+tool</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<h2 id="toc-title">Contents</h2>
+<ul>
+<li><a href="#quick-start-a-new-data-science-project" id="toc-quick-start-a-new-data-science-project">Quick start: a new data
+science project</a>
+<ul>
+<li><a href="#install-uv" id="toc-install-uv">1. Install uv</a></li>
+<li><a href="#create-a-project-and-add-packages" id="toc-create-a-project-and-add-packages">2. Create a project and add
+packages</a></li>
+<li><a href="#open-a-notebook" id="toc-open-a-notebook">3. Open a
+notebook</a></li>
+<li><a href="#make-a-map-and-a-chart" id="toc-make-a-map-and-a-chart">4.
+Make a map and a chart</a></li>
+</ul></li>
+<li><a href="#the-details" id="toc-the-details">The details</a>
+<ul>
+<li><a href="#installing-uv" id="toc-installing-uv">Installing
+uv</a></li>
+<li><a href="#project-files" id="toc-project-files">Project
+files</a></li>
+<li><a href="#adding-and-removing-packages" id="toc-adding-and-removing-packages">Adding and removing
+packages</a></li>
+<li><a href="#jupyter" id="toc-jupyter">Jupyter</a></li>
+<li><a href="#running-scripts" id="toc-running-scripts">Running
+scripts</a></li>
+<li><a href="#sharing-and-reproducing" id="toc-sharing-and-reproducing">Sharing and reproducing</a></li>
+<li><a href="#managing-python-versions" id="toc-managing-python-versions">Managing Python versions</a></li>
+<li><a href="#single-file-scripts" id="toc-single-file-scripts">Single-file scripts</a></li>
+<li><a href="#command-line-tools" id="toc-command-line-tools">Command-line tools</a></li>
+<li><a href="#coming-from-pip-or-conda" id="toc-coming-from-pip-or-conda">Coming from pip or conda</a></li>
+<li><a href="#cheat-sheet" id="toc-cheat-sheet">Cheat sheet</a></li>
+</ul></li>
+<li><a href="#background-why-uv" id="toc-background-why-uv">Background:
+why uv?</a>
+<ul>
+<li><a href="#what-it-is" id="toc-what-it-is">What it is</a></li>
+<li><a href="#the-problem-it-solves" id="toc-the-problem-it-solves">The
+problem it solves</a></li>
+<li><a href="#comparison" id="toc-comparison">Comparison</a></li>
+<li><a href="#uv-vs.-conda" id="toc-uv-vs.-conda">uv vs. conda</a></li>
+<li><a href="#standards" id="toc-standards">Standards</a></li>
+<li><a href="#learn-more" id="toc-learn-more">Learn more</a></li>
+</ul></li>
+</ul>
+</nav>
+<p><a href="https://docs.astral.sh/uv/">uv</a> is a single, fast tool
+that handles Python versions, virtual environments, packages, and
+command-line tools. This guide starts with a quick, concrete example: a
+new mapping project with GeoPandas, seaborn, and matplotlib. Then it
+covers each step in more detail. It ends with <a href="#background-why-uv">background</a> on where uv fits alongside pip,
+conda, and other tools.</p>
+<h1 id="quick-start-a-new-data-science-project"><a href="#quick-start-a-new-data-science-project" class="header-link">Quick
+start: a new data science project</a></h1>
+<h2 id="install-uv"><a href="#install-uv" class="header-link">1. Install
+uv</a></h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS / Linux</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows (PowerShell)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">powershell</span> <span class="at">-ExecutionPolicy</span> ByPass <span class="at">-c</span> <span class="st">&quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span></span></code></pre></div>
+<p>Open a new terminal afterwards. You don’t need Python installed
+first. See <a href="#installing-uv">Installing uv</a> for Homebrew,
+WinGet, and updates.</p>
+<h2 id="create-a-project-and-add-packages"><a href="#create-a-project-and-add-packages" class="header-link">2. Create
+a project and add packages</a></h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> init world-map</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> world-map</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add geopandas seaborn matplotlib</span></code></pre></div>
+<p>uv downloads Python if needed, creates a virtual environment in
+<code>.venv/</code>, installs the packages, and records exact versions
+in <code>uv.lock</code>.</p>
+<h2 id="open-a-notebook"><a href="#open-a-notebook" class="header-link">3. Open a notebook</a></h2>
+<p>Pick <strong>one</strong> of these.</p>
+<p><strong>Option A: JupyterLab in the browser</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--dev</span> jupyterlab</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run jupyter lab</span></code></pre></div>
+<p>In JupyterLab, create a new notebook with the default <strong>Python
+3</strong> kernel.</p>
+<p><strong>Option B: VS Code</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--dev</span> ipykernel</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">code</span> .</span></code></pre></div>
+<p>Install the <strong>Python</strong> and <strong>Jupyter</strong>
+extensions if you haven’t already. Create <code>analysis.ipynb</code>,
+click <strong>Select Kernel</strong> (top right), and choose the
+<code>.venv</code> environment.</p>
+<h2 id="make-a-map-and-a-chart"><a href="#make-a-map-and-a-chart" class="header-link">4. Make a map and a chart</a></h2>
+<p>Paste this into a notebook cell and run it:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&quot;https://naciscdn.org/naturalearth/110m/cultural/ne_110m_admin_0_countries.zip&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>world <span class="op">=</span> gpd.read_file(url)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>world <span class="op">=</span> world[world[<span class="st">&quot;POP_EST&quot;</span>] <span class="op">&gt;</span> <span class="dv">1_000_000</span>]  <span class="co"># drop Antarctica and tiny islands</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>world[<span class="st">&quot;gdp_per_capita&quot;</span>] <span class="op">=</span> world[<span class="st">&quot;GDP_MD&quot;</span>] <span class="op">*</span> <span class="fl">1e6</span> <span class="op">/</span> world[<span class="st">&quot;POP_EST&quot;</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">9</span>))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>world.plot(column<span class="op">=</span><span class="st">&quot;gdp_per_capita&quot;</span>, cmap<span class="op">=</span><span class="st">&quot;viridis&quot;</span>, legend<span class="op">=</span><span class="va">True</span>, ax<span class="op">=</span>ax1)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">&quot;GDP per capita&quot;</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>world, x<span class="op">=</span><span class="st">&quot;CONTINENT&quot;</span>, y<span class="op">=</span><span class="st">&quot;gdp_per_capita&quot;</span>, ax<span class="op">=</span>ax2)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>ax2.tick_params(axis<span class="op">=</span><span class="st">&quot;x&quot;</span>, rotation<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code></pre></div>
+<p>That’s a complete, reproducible project. Commit it to git, and a
+collaborator can recreate the same environment with
+<code>uv sync</code>. The rest of this guide explains each piece.</p>
+<h1 id="the-details"><a href="#the-details" class="header-link">The
+details</a></h1>
+<h2 id="installing-uv"><a href="#installing-uv" class="header-link">Installing uv</a></h2>
+<p><strong>macOS / Linux</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div>
+<p>Or with Homebrew: <code>brew install uv</code></p>
+<p><strong>Windows</strong> (PowerShell)</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>powershell <span class="op">-</span>ExecutionPolicy ByPass <span class="op">-</span>c <span class="st">&quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span></span></code></pre></div>
+<p>Or with WinGet: <code>winget install --id=astral-sh.uv -e</code></p>
+<p>Open a new terminal, then check that it worked:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> <span class="at">--version</span></span></code></pre></div>
+<p>To update uv later, run <code>uv self update</code>, or use
+<code>brew upgrade uv</code> / <code>winget upgrade astral-sh.uv</code>
+if you installed it that way.</p>
+<h2 id="project-files"><a href="#project-files" class="header-link">Project files</a></h2>
+<p><code>uv init world-map</code> creates:</p>
+<pre class="text"><code>world-map/
+├── .gitignore
+├── .python-version         # Python version for this project
+├── README.md
+├── pyproject.toml          # project metadata and dependencies
+└── src/world_map/__init__.py</code></pre>
+<p>After the first <code>uv add</code>, you’ll also have
+<code>.venv/</code> (the environment) and <code>uv.lock</code> (exact
+versions of every package).</p>
+<p>For an analysis project you may not need the <code>src/</code>
+package. <code>uv init --no-package world-map</code> creates a flat
+layout with a <code>main.py</code> instead. Older versions of uv use
+that layout by default.</p>
+<h2 id="adding-and-removing-packages"><a href="#adding-and-removing-packages" class="header-link">Adding and
+removing packages</a></h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandas geopandas matplotlib</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--dev</span> jupyterlab</span></code></pre></div>
+<p>Packages you use only for development, like JupyterLab or ipykernel,
+go under <code>--dev</code>. Your code doesn’t import them, and they’re
+kept separate in <code>pyproject.toml</code>.</p>
+<p>GeoPandas and its geospatial libraries (shapely, pyproj, pyogrio)
+come as prebuilt wheels on PyPI. These include GDAL and PROJ, so on
+macOS, Linux, and Windows you don’t need conda or a system install.</p>
+<p>Other useful commands:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="st">&quot;pandas&gt;=2.2&quot;</span>           <span class="co"># with a version constraint</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> remove matplotlib           <span class="co"># remove a package</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tree                        <span class="co"># show the dependency tree</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> lock <span class="at">--upgrade</span>              <span class="co"># upgrade everything</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> lock <span class="at">--upgrade-package</span> pandas   <span class="co"># upgrade one package</span></span></code></pre></div>
+<p>Commit <code>pyproject.toml</code>, <code>uv.lock</code>, and
+<code>.python-version</code> to git. Don’t commit <code>.venv/</code>;
+<code>uv init</code> already adds it to <code>.gitignore</code>.</p>
+<h2 id="jupyter"><a href="#jupyter" class="header-link">Jupyter</a></h2>
+<p><strong>JupyterLab.</strong> <code>uv run jupyter lab</code> starts
+JupyterLab inside the project environment. Its notebooks can import
+everything you’ve added with <code>uv add</code>. If you add a package
+while JupyterLab is running, restart the kernel to pick it up.</p>
+<p><strong>VS Code and other editors.</strong> Editors start their own
+kernel, so the project needs <code>ipykernel</code>
+(<code>uv add --dev ipykernel</code>). Then choose <code>.venv</code> as
+the kernel or interpreter. If <code>.venv</code> doesn’t appear in the
+list, reload the window or pick <strong>Enter interpreter path</strong>
+and point it at <code>.venv/bin/python</code>
+(<code>.venv\Scripts\python.exe</code> on Windows).</p>
+<p><strong>Quick, throwaway notebook</strong> (no project needed):</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uvx</span> <span class="at">--with</span> pandas <span class="at">--with</span> geopandas jupyter lab</span></code></pre></div>
+<h2 id="running-scripts"><a href="#running-scripts" class="header-link">Running scripts</a></h2>
+<p><code>uv run</code> runs a command inside the project environment.
+You don’t have to activate anything.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run analysis.py</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python            <span class="co"># interactive Python shell</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest</span></code></pre></div>
+<p>If you prefer activating the environment the usual way:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate      <span class="co"># macOS / Linux</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv\Scripts\activate</span>         <span class="co"># Windows</span></span></code></pre></div>
+<h2 id="sharing-and-reproducing"><a href="#sharing-and-reproducing" class="header-link">Sharing and reproducing</a></h2>
+<p>When a collaborator clones your repo, they run:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run jupyter lab</span></code></pre></div>
+<p><code>uv sync</code> installs the exact package versions recorded in
+<code>uv.lock</code>, on any operating system. Everyone gets the same
+environment, so “works on my machine” problems are much less likely.</p>
+<h2 id="managing-python-versions"><a href="#managing-python-versions" class="header-link">Managing Python versions</a></h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> python list             <span class="co"># versions available and installed</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> python install 3.13     <span class="co"># install a version</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> python pin 3.12         <span class="co"># set this project&#39;s version (.python-version)</span></span></code></pre></div>
+<p>You can also choose a version when creating a project:
+<code>uv init --python 3.12 world-map</code>.</p>
+<h2 id="single-file-scripts"><a href="#single-file-scripts" class="header-link">Single-file scripts</a></h2>
+<p>For a one-off analysis script, uv can record dependencies inside the
+file itself:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> init <span class="at">--script</span> clean_data.py</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--script</span> clean_data.py pandas geopandas</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run clean_data.py</span></code></pre></div>
+<p>uv writes a short metadata block at the top of the script. Anyone
+with uv can then run the script, and uv installs what it needs
+automatically.</p>
+<h2 id="command-line-tools"><a href="#command-line-tools" class="header-link">Command-line tools</a></h2>
+<p>For tools you use across projects, like the <code>ruff</code> linter
+or the <code>nbstripout</code> notebook-output cleaner:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uvx</span> ruff check .           <span class="co"># run once, in a temporary environment</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool install ruff       <span class="co"># install permanently and put it on your PATH</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool upgrade <span class="at">--all</span></span></code></pre></div>
+<p><code>uvx</code> is short for <code>uv tool run</code>.</p>
+<h2 id="coming-from-pip-or-conda"><a href="#coming-from-pip-or-conda" class="header-link">Coming from pip or conda</a></h2>
+<p><strong>From <code>requirements.txt</code>:</strong></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> init</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">-r</span> requirements.txt</span></code></pre></div>
+<p><strong>From a conda <code>environment.yml</code>:</strong> uv can’t
+read this file directly. Copy the package names into
+<code>uv add</code>. Most data science packages, including numpy,
+pandas, scikit-learn, GeoPandas, and JupyterLab, are on PyPI under the
+same names.</p>
+<p>uv also has a pip-compatible interface. It’s useful when you can’t
+switch the whole workflow over yet:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install <span class="at">-r</span> requirements.txt</span></code></pre></div>
+<h2 id="cheat-sheet"><a href="#cheat-sheet" class="header-link">Cheat
+sheet</a></h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New project</td>
+<td><code>uv init name</code></td>
+</tr>
+<tr>
+<td>Add package</td>
+<td><code>uv add pkg</code></td>
+</tr>
+<tr>
+<td>Add dev package</td>
+<td><code>uv add --dev pkg</code></td>
+</tr>
+<tr>
+<td>Remove package</td>
+<td><code>uv remove pkg</code></td>
+</tr>
+<tr>
+<td>Start JupyterLab</td>
+<td><code>uv run jupyter lab</code></td>
+</tr>
+<tr>
+<td>Run a script</td>
+<td><code>uv run script.py</code></td>
+</tr>
+<tr>
+<td>Install from lockfile</td>
+<td><code>uv sync</code></td>
+</tr>
+<tr>
+<td>Upgrade all packages</td>
+<td><code>uv lock --upgrade</code></td>
+</tr>
+<tr>
+<td>Install Python</td>
+<td><code>uv python install 3.13</code></td>
+</tr>
+<tr>
+<td>Pin Python version</td>
+<td><code>uv python pin 3.13</code></td>
+</tr>
+<tr>
+<td>Run a tool once</td>
+<td><code>uvx tool</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="background-why-uv"><a href="#background-why-uv" class="header-link">Background: why uv?</a></h1>
+<h2 id="what-it-is"><a href="#what-it-is" class="header-link">What it
+is</a></h2>
+<p>uv is an open-source tool from <a href="https://astral.sh">Astral</a>, the company that also makes the
+Ruff linter. It first came out in 2024. It’s written in Rust and ships
+as one binary with no dependencies, so it doesn’t need Python in order
+to install Python.</p>
+<h2 id="the-problem-it-solves"><a href="#the-problem-it-solves" class="header-link">The problem it solves</a></h2>
+<p>A typical Python setup used to involve several separate tools:</p>
+<ul>
+<li><strong>pyenv</strong> or the python.org installer for Python
+itself</li>
+<li><strong>venv</strong> / <strong>virtualenv</strong> for isolated
+environments</li>
+<li><strong>pip</strong> to install packages</li>
+<li><strong>pip-tools</strong> to pin exact versions in a lockfile</li>
+<li><strong>pipx</strong> for command-line tools</li>
+<li><strong>conda</strong> for anything with hard-to-build compiled
+dependencies</li>
+</ul>
+<p>uv covers almost all of these jobs with one consistent interface.
+It’s also much faster: usually 10 to 100 times faster than pip, and far
+faster than conda’s solver. Much of that speed comes from a global
+cache, so a package you’ve downloaded once is reused by every project.
+Creating a new environment with pandas and GeoPandas usually takes a few
+seconds.</p>
+<h2 id="comparison"><a href="#comparison" class="header-link">Comparison</a></h2>
+<table style="width:99%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Python versions</th>
+<th>Environments</th>
+<th>Lockfile</th>
+<th>Non-Python libraries</th>
+<th>Speed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>uv</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Wheels only</td>
+<td>Very fast</td>
+</tr>
+<tr>
+<td>pip + venv</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>Wheels only</td>
+<td>Slow</td>
+</tr>
+<tr>
+<td>conda / mamba</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Via add-on</td>
+<td>Yes</td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td>pixi</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Fast</td>
+</tr>
+<tr>
+<td>Poetry</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Wheels only</td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td>pyenv</td>
+<td>Yes</td>
+<td>Plugin</td>
+<td>No</td>
+<td>No</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uv-vs.-conda"><a href="#uv-vs.-conda" class="header-link">uv
+vs. conda</a></h2>
+<p>For years, conda was the default for data science because packages
+like GDAL were hard to install with pip. That’s mostly no longer true.
+Today, the common scientific stack ships as prebuilt wheels on PyPI,
+including NumPy, pandas, scikit-learn, GeoPandas, rasterio, and
+PyTorch.</p>
+<p>Stick with <strong>conda</strong> or <strong><a href="https://pixi.sh">pixi</a></strong> when you need things that
+aren’t Python packages on PyPI. Examples include R, specific CUDA
+toolkits, or unusual geospatial or HPC libraries. pixi is a fast,
+project-based conda tool, and it uses uv internally for PyPI
+packages.</p>
+<h2 id="standards"><a href="#standards" class="header-link">Standards</a></h2>
+<p>uv follows the standard Python packaging specifications. Dependencies
+are declared in a regular <code>pyproject.toml</code> (PEP 621), and
+inline script metadata follows PEP 723. If you stop using uv, your
+project metadata still works with other tools. The <code>uv.lock</code>
+file is specific to uv, but you can export it with
+<code>uv export --format requirements-txt</code>.</p>
+<h2 id="learn-more"><a href="#learn-more" class="header-link">Learn
+more</a></h2>
+<ul>
+<li>uv documentation: <a href="https://docs.astral.sh/uv/" class="uri">https://docs.astral.sh/uv/</a></li>
+<li>Using uv with Jupyter: <a href="https://docs.astral.sh/uv/guides/integration/jupyter/" class="uri">https://docs.astral.sh/uv/guides/integration/jupyter/</a></li>
+<li>Source code: <a href="https://github.com/astral-sh/uv" class="uri">https://github.com/astral-sh/uv</a></li>
+</ul>
+</body>
+</html>
