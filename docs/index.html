@@ -138,6 +138,9 @@ th { background: #f6f6f8; }
 a.header-link { color: inherit; text-decoration: none; }
 a.header-link:hover { text-decoration: underline; }
 a.header-link:hover::after { content: " #"; color: #aaa; }
+blockquote { margin: 1.25rem 0; padding: .6rem 1rem; background: #e9e4f5; border-left: 4px solid #6a3dc4; border-radius: 4px; }
+blockquote p { margin: .25rem 0; }
+blockquote :not(pre) > code { background: #fff; }
 </style>
 </head>
 <body>
@@ -191,17 +194,27 @@ need conda or a system install.</p>
 versions of every package).</p>
 <p><code>--no-package</code> keeps the layout flat, which suits an
 analysis project. Two other options:</p>
-<ul>
+<ol type="1">
 <li><code>uv init my-project</code> (no flag) creates a
 <code>src/my_project/</code> package instead of <code>main.py</code>.
 This is useful if you’re building a library to install or publish.</li>
 <li><code>uv init --bare</code> creates only a
 <code>pyproject.toml</code>. It’s handy for adding uv to a folder that
 already has your code.</li>
-</ul>
+</ol>
 <p>Commit <code>pyproject.toml</code>, <code>uv.lock</code>, and
 <code>.python-version</code> to git. Don’t commit <code>.venv/</code>;
 <code>uv init</code> already adds it to <code>.gitignore</code>.</p>
+<blockquote>
+<p><strong>A note on virtual environments.</strong> uv mostly hides
+virtual environments, so this guide doesn’t spend much time on them. The
+model is: <strong>one project = one folder = one
+<code>.venv/</code></strong>. The project folder takes the place of the
+environment name. <code>uv add</code>, <code>uv sync</code>, and
+<code>uv run</code> create and update <code>.venv/</code> for you, so
+you never run <code>uv venv</code> yourself. To “switch environments,”
+you <code>cd</code> into another project.</p>
+</blockquote>
 <h2 id="run-a-script"><a href="#run-a-script" class="header-link">Run a
 script</a></h2>
 <p><code>uv run</code> runs a command inside the project environment.

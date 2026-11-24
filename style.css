@@ -20,3 +20,6 @@ th { background: #f6f6f8; }
 a.header-link { color: inherit; text-decoration: none; }
 a.header-link:hover { text-decoration: underline; }
 a.header-link:hover::after { content: " #"; color: #aaa; }
+blockquote { margin: 1.25rem 0; padding: .6rem 1rem; background: #e9e4f5; border-left: 4px solid #6a3dc4; border-radius: 4px; }
+blockquote p { margin: .25rem 0; }
+blockquote :not(pre) > code { background: #fff; }

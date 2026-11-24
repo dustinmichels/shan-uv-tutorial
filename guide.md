@@ -56,10 +56,12 @@ After the first `uv add`, you'll also have `.venv/` (the environment) and `uv.lo
 
 `--no-package` keeps the layout flat, which suits an analysis project. Two other options:
 
-- `uv init my-project` (no flag) creates a `src/my_project/` package instead of `main.py`. This is useful if you're building a library to install or publish.
-- `uv init --bare` creates only a `pyproject.toml`. It's handy for adding uv to a folder that already has your code.
+1. `uv init my-project` (no flag) creates a `src/my_project/` package instead of `main.py`. This is useful if you're building a library to install or publish.
+1. `uv init --bare` creates only a `pyproject.toml`. It's handy for adding uv to a folder that already has your code.
 
 Commit `pyproject.toml`, `uv.lock`, and `.python-version` to git. Don't commit `.venv/`; `uv init` already adds it to `.gitignore`.
+
+> **A note on virtual environments.** uv mostly hides virtual environments, so this guide doesn't spend much time on them. The model is: **one project = one folder = one `.venv/`**. The project folder takes the place of the environment name. `uv add`, `uv sync`, and `uv run` create and update `.venv/` for you, so you never run `uv venv` yourself. To "switch environments," you `cd` into another project.
 
 ## Run a script
 

@@ -17,6 +17,13 @@
 )
 #set table(stroke: 0.5pt + rgb("#cccccc"), inset: 6pt)
 #show table.cell.where(y: 0): set text(weight: "bold")
+#show quote.where(block: true): block.with(
+  fill: rgb("#e9e4f5"),
+  stroke: (left: 3pt + rgb("#6a3dc4")),
+  inset: 10pt,
+  radius: 4pt,
+  width: 100%,
+)
 #show heading.where(level: 1): it => block(above: 1.4em, below: 0.7em, it)
 #show outline.entry.where(level: 1): it => {
   v(0.4em, weak: true)
