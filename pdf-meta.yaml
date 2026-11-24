@@ -1,0 +1,5 @@
+papersize: us-letter
+fontsize: 10.5pt
+margin:
+  x: 1in
+  y: 0.9in

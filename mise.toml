@@ -1,0 +1,15 @@
+[tools]
+typst = "latest"
+pandoc = "latest"
+
+[tasks.html]
+description = "Render guide.md to out/index.html"
+run = "mkdir -p out && pandoc guide.md -s --toc --toc-depth=2 --lua-filter=header-links.lua --embed-resources --css style.css -o out/index.html"
+
+[tasks.pdf]
+description = "Render guide.md to out/guide.pdf (via Typst)"
+run = "mkdir -p out && pandoc guide.md --toc --toc-depth=2 --pdf-engine=typst --include-in-header=typst-header.typ --metadata-file=pdf-meta.yaml -o out/guide.pdf"
+
+[tasks.build]
+description = "Build HTML and PDF"
+depends = ["html", "pdf"]
